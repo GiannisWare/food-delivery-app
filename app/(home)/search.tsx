@@ -1,16 +1,19 @@
-import { View, Text, SafeAreaView, FlatList } from "react-native";
-import React, { useEffect } from "react";
-import useAppwrite from "@/lib/useAppwrite";
-import { getCategories, getMenu } from "@/lib/appwrite";
-import { useLocalSearchParams } from "expo-router";
 import CartButton from "@/components/CartButton";
-import cn from "clsx";
-import MenuCard from "@/components/MenuCard";
-import { MenuItem } from "@/type";
 import Filter from "@/components/Filter";
+import MenuCard from "@/components/MenuCard";
 import SearchBar from "@/components/SearchBar";
+import { getCategories, getMenu } from "@/lib/appwrite";
+import useAppwrite from "@/lib/useAppwrite";
+import { MenuItem } from "@/type";
+import cn from "clsx";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect } from "react";
+import { FlatList, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Search = () => {
+  const insets = useSafeAreaInsets();
+
   const { category, query } = useLocalSearchParams<{
     query: string;
     category: string;
@@ -33,7 +36,12 @@ const Search = () => {
   }, [category, query]);
 
   return (
-    <SafeAreaView className="bg-white h-full">
+    <View
+      style={{
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+      }}
+      className="bg-white h-full ">
       <FlatList
         data={data}
         renderItem={({ item, index }) => {
@@ -41,10 +49,9 @@ const Search = () => {
           return (
             <View
               className={cn(
-                "flex-1 max-w-[48%]",
-                isRightColItem ? "mt-8" : "mt-0",
-              )}
-            >
+                "flex-1 max-w-[50%]",
+                isRightColItem ? "mt-8" : "mt-0"
+              )}>
               <MenuCard item={item as MenuItem} />
             </View>
           );
@@ -69,12 +76,27 @@ const Search = () => {
               <CartButton />
             </View>
             <SearchBar />
-            <Filter />
+            <Filter
+              categories={
+                categories
+                  ? categories.map((cat: any) => ({
+                      $id: cat.$id,
+                      name: cat.name,
+                      description: cat.description,
+                      $collectionId: cat.$collectionId,
+                      $databaseId: cat.$databaseId,
+                      $createdAt: cat.$createdAt,
+                      $updatedAt: cat.$updatedAt,
+                      $permissions: cat.$permissions,
+                    }))
+                  : []
+              }
+            />
           </View>
         )}
         ListEmptyComponent={() => !loading && <Text>No Results</Text>}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 export default Search;

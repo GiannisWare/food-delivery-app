@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
-import React from "react";
-import { MenuItem } from "@/type";
 import { appwriteConfig } from "@/lib/appwrite";
+import { MenuItem } from "@/type";
+import React from "react";
+import { Image, Platform, Text, TouchableOpacity } from "react-native";
 
 const MenuCard = ({ item: { image_url, name, price } }: { item: MenuItem }) => {
   const imageUrl = `${image_url}?project=${appwriteConfig.projectId}`;
